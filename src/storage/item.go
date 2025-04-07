@@ -312,6 +312,29 @@ func (s *Storage) UpdateItemStatus(item_id int64, status ItemStatus) bool {
 	return err == nil
 }
 
+func (s *Storage) UpdateMultipleItemStatuses(item_ids []int64, status ItemStatus) bool {
+	if len(item_ids) == 0 {
+		return true
+	}
+
+	// Build the query with placeholders for all item IDs
+	placeholders := make([]string, len(item_ids))
+	args := make([]interface{}, len(item_ids)+1)
+	for i := range item_ids {
+		placeholders[i] = "?"
+		args[i] = item_ids[i]
+	}
+	args[len(item_ids)] = status
+
+	query := fmt.Sprintf(
+		`update items set status = ? where id in (%s)`,
+		strings.Join(placeholders, ","),
+	)
+
+	_, err := s.db.Exec(query, args...)
+	return err == nil
+}
+
 func (s *Storage) MarkItemsRead(filter MarkFilter) bool {
 	predicate, args := listQueryPredicate(ItemFilter{
 		FolderID: filter.FolderID,

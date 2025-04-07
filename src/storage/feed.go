@@ -2,7 +2,9 @@ package storage
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
+	"strings"
 )
 
 type Feed struct {
@@ -161,6 +163,50 @@ func (s *Storage) GetFeed(id int64) *Feed {
 		return nil
 	}
 	return &f
+}
+
+// GetFeeds fetches multiple feeds by their IDs
+func (s *Storage) GetFeeds(ids []int64) []*Feed {
+	if len(ids) == 0 {
+		return nil
+	}
+
+	// Build the query with placeholders for all IDs
+	placeholders := make([]string, len(ids))
+	args := make([]interface{}, len(ids))
+	for i, id := range ids {
+		placeholders[i] = "?"
+		args[i] = id
+	}
+
+	query := fmt.Sprintf(`
+		select
+			id, folder_id, title, link, feed_link,
+			icon, ifnull(icon, '') != '' as has_icon
+		from feeds where id in (%s)
+	`, strings.Join(placeholders, ","))
+
+	rows, err := s.db.Query(query, args...)
+	if err != nil {
+		log.Print(err)
+		return nil
+	}
+	defer rows.Close()
+
+	result := make([]*Feed, 0, len(ids))
+	for rows.Next() {
+		var f Feed
+		err = rows.Scan(
+			&f.Id, &f.FolderId, &f.Title, &f.Link, &f.FeedLink,
+			&f.Icon, &f.HasIcon,
+		)
+		if err != nil {
+			log.Print(err)
+			continue
+		}
+		result = append(result, &f)
+	}
+	return result
 }
 
 func (s *Storage) ResetFeedErrors() {
