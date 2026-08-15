@@ -6,15 +6,17 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"sync"
+	"time"
 
 	"github.com/nkanaev/yarr/src/storage"
 	"github.com/nkanaev/yarr/src/worker"
 )
 
 type Server struct {
-	Addr        string
-	db          storage.Storage
-	worker      *worker.Worker
+	Addr   string
+	db     storage.Storage
+	worker *worker.Worker
 
 	BasePath string
 
@@ -24,13 +26,18 @@ type Server struct {
 	// https
 	CertFile string
 	KeyFile  string
+
+	// google reader api action tokens, keyed by token with their expiry time
+	greaderTokens      map[string]time.Time
+	greaderTokensMutex sync.Mutex
 }
 
 func NewServer(db storage.Storage, addr string) *Server {
 	return &Server{
-		db:     db,
-		Addr:   addr,
-		worker: worker.NewWorker(db),
+		db:            db,
+		Addr:          addr,
+		worker:        worker.NewWorker(db),
+		greaderTokens: make(map[string]time.Time),
 	}
 }
 

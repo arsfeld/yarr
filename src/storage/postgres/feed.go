@@ -111,6 +111,26 @@ func (s *PostgresStorage) ListFeeds() []model.Feed {
 	return result
 }
 
+func (s *PostgresStorage) GetFeedByFeedLink(feedLink string) *model.Feed {
+	var f model.Feed
+	err := s.db.QueryRow(`
+		select
+			id, folder_id, title, link, feed_link,
+			icon
+		from feeds where feed_link = $1
+	`, feedLink).Scan(
+		&f.Id, &f.FolderId, &f.Title, &f.Link, &f.FeedLink,
+		&f.Icon,
+	)
+	if err != nil {
+		if err != sql.ErrNoRows {
+			log.Print(err)
+		}
+		return nil
+	}
+	return &f
+}
+
 func (s *PostgresStorage) GetFeed(id int64) *model.Feed {
 	var f model.Feed
 	err := s.db.QueryRow(`

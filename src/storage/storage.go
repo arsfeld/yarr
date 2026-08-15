@@ -20,13 +20,16 @@ type Storage interface {
 	DeleteOldItems()
 	FeedStats() []model.FeedStat
 	GetFeed(id int64) *model.Feed
+	GetFeedByFeedLink(feedLink string) *model.Feed
 	GetFeedState(feedID int64) (*model.FeedState, error)
+	GetFolderByTitle(title string) *model.Folder
 	GetItem(id int64) *model.Item
 	GetSettings() model.Settings
 	ListFeedStates() ([]model.FeedState, error)
 	ListFeeds() []model.Feed
 	ListFolders() []model.Folder
 	ListItems(filter model.ItemFilter, limit int, newestFirst bool, withContent bool) []model.Item
+	ListItemIDs(filter model.ItemFilter, limit int, newestFirst bool) []int64
 	MarkItemsRead(filter model.MarkFilter) bool
 	UpdateFeed(feedId int64, params model.UpdateFeedParams) (bool, error)
 	UpdateFeedState(feedID int64, params model.UpdateFeedStateParams) (bool, error)

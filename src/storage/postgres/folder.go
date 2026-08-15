@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"database/sql"
 	"log"
 
 	"github.com/nkanaev/yarr/src/storage/model"
@@ -49,6 +50,21 @@ func (s *PostgresStorage) UpdateFolder(folderId int64, params model.UpdateFolder
 		return false, err
 	}
 	return true, nil
+}
+
+func (s *PostgresStorage) GetFolderByTitle(title string) *model.Folder {
+	var f model.Folder
+	err := s.db.QueryRow(`
+		select id, title, is_expanded
+		from folders where title = $1
+	`, title).Scan(&f.Id, &f.Title, &f.IsExpanded)
+	if err != nil {
+		if err != sql.ErrNoRows {
+			log.Print(err)
+		}
+		return nil
+	}
+	return &f
 }
 
 func (s *PostgresStorage) ListFolders() []model.Folder {

@@ -33,7 +33,7 @@ func (s *Server) handler() http.Handler {
 			BasePath: s.BasePath,
 			Username: s.Username,
 			Password: s.Password,
-			Public:   []string{"/", "/login", "/static", "/fever", "/manifest.json"},
+			Public:   []string{"/", "/login", "/static", "/fever", "/manifest.json", "/reader", "/accounts"},
 			DB:       s.db,
 		}
 		r.Use(a.Handler)
@@ -58,6 +58,8 @@ func (s *Server) handler() http.Handler {
 	r.For("/login", s.handleLogin)
 	r.For("/logout", s.handleLogout)
 	r.For("/fever/", s.handleFever)
+	r.For("/accounts/ClientLogin", s.handleGReaderLogin)
+	r.For("/reader/*path", s.handleGReader)
 
 	return r
 }

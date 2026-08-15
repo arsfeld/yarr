@@ -52,6 +52,21 @@ func (s *SQLiteStorage) UpdateFolder(folderId int64, params model.UpdateFolderPa
 	return true, nil
 }
 
+func (s *SQLiteStorage) GetFolderByTitle(title string) *model.Folder {
+	var f model.Folder
+	err := s.db.QueryRow(`
+		select id, title, is_expanded
+		from folders where title = :title
+	`, sql.Named("title", title)).Scan(&f.Id, &f.Title, &f.IsExpanded)
+	if err != nil {
+		if err != sql.ErrNoRows {
+			log.Print(err)
+		}
+		return nil
+	}
+	return &f
+}
+
 func (s *SQLiteStorage) ListFolders() []model.Folder {
 	result := make([]model.Folder, 0)
 	rows, err := s.db.Query(`

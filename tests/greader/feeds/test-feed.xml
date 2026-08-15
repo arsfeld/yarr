@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Test Feed</title>
+    <link>http://testfeed</link>
+    <description>A test feed for yarr GReader API tests</description>
+    <item>
+      <title>Article One</title>
+      <link>http://testfeed/article-1</link>
+      <guid>article-1</guid>
+      <description>Content of article one.</description>
+      <pubDate>Mon, 30 Mar 2026 10:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>Article Two</title>
+      <link>http://testfeed/article-2</link>
+      <guid>article-2</guid>
+      <description>Content of article two.</description>
+      <pubDate>Mon, 30 Mar 2026 09:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>Article Three</title>
+      <link>http://testfeed/article-3</link>
+      <guid>article-3</guid>
+      <description>Content of article three.</description>
+      <pubDate>Mon, 30 Mar 2026 08:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>Article Four</title>
+      <link>http://testfeed/article-4</link>
+      <guid>article-4</guid>
+      <description>Content of article four.</description>
+      <pubDate>Mon, 30 Mar 2026 07:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>Article Five</title>
+      <link>http://testfeed/article-5</link>
+      <guid>article-5</guid>
+      <description>Content of article five.</description>
+      <pubDate>Mon, 30 Mar 2026 06:00:00 GMT</pubDate>
+    </item>
+  </channel>
+</rss>

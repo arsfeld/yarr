@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Second Test Feed</title>
+    <link>http://testfeed</link>
+    <description>A second test feed for subscription management tests</description>
+    <item>
+      <title>Second Feed Article</title>
+      <link>http://testfeed/second-1</link>
+      <guid>second-1</guid>
+      <description>Content of second feed article.</description>
+      <pubDate>Mon, 30 Mar 2026 10:00:00 GMT</pubDate>
+    </item>
+  </channel>
+</rss>

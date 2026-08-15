@@ -111,6 +111,26 @@ func (s *SQLiteStorage) ListFeeds() []model.Feed {
 	return result
 }
 
+func (s *SQLiteStorage) GetFeedByFeedLink(feedLink string) *model.Feed {
+	var f model.Feed
+	err := s.db.QueryRow(`
+		select
+			id, folder_id, title, link, feed_link,
+			icon
+		from feeds where feed_link = :feed_link
+	`, sql.Named("feed_link", feedLink)).Scan(
+		&f.Id, &f.FolderId, &f.Title, &f.Link, &f.FeedLink,
+		&f.Icon,
+	)
+	if err != nil {
+		if err != sql.ErrNoRows {
+			log.Print(err)
+		}
+		return nil
+	}
+	return &f
+}
+
 func (s *SQLiteStorage) GetFeed(id int64) *model.Feed {
 	var f model.Feed
 	err := s.db.QueryRow(`

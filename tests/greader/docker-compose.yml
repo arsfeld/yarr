@@ -1,0 +1,34 @@
+services:
+  testfeed:
+    image: nginx:alpine
+    volumes:
+      - ./feeds:/usr/share/nginx/html:ro
+
+  yarr:
+    build:
+      context: ../..
+      dockerfile: tests/greader/Dockerfile.yarr
+    environment:
+      YARR_ADDR: "0.0.0.0:7070"
+      YARR_AUTH: "test:test"
+      YARR_DB: "/tmp/yarr-test.db"
+    depends_on:
+      - testfeed
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:7070/ || exit 1"]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile.tests
+    environment:
+      YARR_URL: "http://yarr:7070"
+      YARR_USERNAME: "test"
+      YARR_PASSWORD: "test"
+      TESTFEED_URL: "http://testfeed"
+    depends_on:
+      yarr:
+        condition: service_healthy

@@ -120,15 +120,16 @@ type MediaLink struct {
 type MediaLinks []MediaLink
 
 type ItemFilter struct {
-	FolderID *int64
-	FeedID   *int64
-	Status   *ItemStatus
-	Search   *string
-	After    *int64
-	IDs      *[]int64
-	SinceID  *int64
-	MaxID    *int64
-	Before   *time.Time
+	FolderID  *int64
+	FeedID    *int64
+	Status    *ItemStatus
+	Search    *string
+	After     *int64
+	IDs       *[]int64
+	SinceID   *int64
+	MaxID     *int64
+	Before    *time.Time
+	AfterDate *time.Time
 }
 
 type UpdateItemParams struct {

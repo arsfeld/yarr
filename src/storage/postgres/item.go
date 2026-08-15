@@ -156,6 +156,10 @@ func listQueryPredicate(filter model.ItemFilter, newestFirst bool) (string, []an
 		cond = append(cond, fmt.Sprintf("i.date < $%d", next()))
 		args = append(args, filter.Before)
 	}
+	if filter.AfterDate != nil {
+		cond = append(cond, fmt.Sprintf("i.date >= $%d", next()))
+		args = append(args, filter.AfterDate)
+	}
 
 	predicate := "true"
 	if len(cond) > 0 {
@@ -227,6 +231,40 @@ func (s *PostgresStorage) ListItems(
 			return result
 		}
 		result = append(result, x)
+	}
+	return result
+}
+
+func (s *PostgresStorage) ListItemIDs(filter model.ItemFilter, limit int, newestFirst bool) []int64 {
+	predicate, args := listQueryPredicate(filter, newestFirst)
+	result := make([]int64, 0)
+
+	order := "date desc, id desc"
+	if !newestFirst {
+		order = "date asc, id asc"
+	}
+
+	query := fmt.Sprintf(`
+		select i.id
+		from items i
+		where %s
+		order by %s
+		limit %d
+		`, predicate, order, limit)
+	rows, err := s.db.Query(query, args...)
+	if err != nil {
+		log.Print(err)
+		return result
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var id int64
+		if err = rows.Scan(&id); err != nil {
+			log.Print(err)
+			return result
+		}
+		result = append(result, id)
 	}
 	return result
 }

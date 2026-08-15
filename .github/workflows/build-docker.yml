@@ -3,7 +3,7 @@ on: workflow_call
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: nkanaev/yarr
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build-and-push-image:

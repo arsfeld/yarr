@@ -150,6 +150,10 @@ func listQueryPredicate(filter model.ItemFilter, newestFirst bool) (string, []an
 		cond = append(cond, "i.date < :before")
 		args = append(args, sql.Named("before", filter.Before))
 	}
+	if filter.AfterDate != nil {
+		cond = append(cond, "i.date >= :after_date")
+		args = append(args, sql.Named("after_date", filter.AfterDate))
+	}
 
 	predicate := "1"
 	if len(cond) > 0 {
@@ -219,6 +223,38 @@ func (s *SQLiteStorage) ListItems(
 			return result
 		}
 		result = append(result, x)
+	}
+	return result
+}
+
+func (s *SQLiteStorage) ListItemIDs(filter model.ItemFilter, limit int, newestFirst bool) []int64 {
+	predicate, args := listQueryPredicate(filter, newestFirst)
+	result := make([]int64, 0)
+
+	order := "date desc, id desc"
+	if !newestFirst {
+		order = "date asc, id asc"
+	}
+
+	query := fmt.Sprintf(`
+		select i.id
+		from items i
+		where %s
+		order by %s
+		limit %d
+		`, predicate, order, limit)
+	rows, err := s.db.Query(query, args...)
+	if err != nil {
+		log.Print(err)
+		return result
+	}
+	for rows.Next() {
+		var id int64
+		if err = rows.Scan(&id); err != nil {
+			log.Print(err)
+			return result
+		}
+		result = append(result, id)
 	}
 	return result
 }
